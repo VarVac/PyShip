@@ -9,3 +9,7 @@ Constructing the PyShip will create a grid and place a single ship in the grid. 
 ## Installation
 
      python3 -m pip install pyship-pkg-variable-vacancy
+
+## Documentation
+
+     https://github.com/VarVac/PyShip/wiki
