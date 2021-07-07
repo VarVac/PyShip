@@ -1,36 +1,36 @@
 import random
 
-#construct a battleship grid and place a battleship by marking four adjacent spaces as containing the battleship. When the battleship is hit, mark the battleship space as "HIT"
-class Battleship():
+#construct a PyShip grid and place a PyShip by marking four adjacent spaces as containing the PyShip. When the PyShip is hit, mark the PyShip space as "HIT"
+class PyShip():
 
-    #init takes rows and columns
-    def __init__(self, gridSize, shipSize):
+    #init takes rows columns and number of tries
+    def __init__(self, gridSize, shipSize, tries):
         #number of hits
         self.numHits = 0
-        
+
+        #number of tries
+        self.tries = tries
+
         #save shipSize
         self.shipSize = shipSize
-
-        #ship status
-        self.isSunk = False
 
         #genarate a square grid
         self.grid = [[0 for i in range(gridSize)] for j in range(gridSize)]
         #print(self.grid)
 
-        #define the direction to place the rest of the battleship
+        #define the direction to place the rest of the PyShip
         placeCase = random.randrange(2)
         placeVector = self.createPlaceVector(placeCase)
         #print(placeVector)
 
-        #define a location for the first battleship space
+        #define a location for the first PyShip space
         placeLocation = self.createPlaceLocation(placeCase, gridSize, shipSize)
         #print(placeLocation)
 
 
-        #place the battleship
-        self.placeBattleShip(placeLocation[0], placeLocation[1], placeVector[0], placeVector[1], shipSize-1)
-        #print(self.grid)
+        #place the PyShip
+        self.placePyShip(placeLocation[0], placeLocation[1], placeVector[0], placeVector[1], shipSize-1)
+        #print(self.grid)    
         
     #generates a place vector
     #generate 4 possible vectors (1,0), (0,1), (-1,0), (0,-1)
@@ -51,32 +51,36 @@ class Battleship():
         elif placeCase == 1:
             return (random.randrange(gridSize),random.randint(0, gridSize - shipSize))
 
-    #place the battleship by setting a grid location to 1
+    #place the PyShip by setting a grid location to 1
     #function recursively calls itself until length is 0, each time, change the placeLocation by adding the place vector
-    def placeBattleShip(self, placeLocationX, placeLocationY, placeVectorX, placeVectorY, length):
+    def placePyShip(self, placeLocationX, placeLocationY, placeVectorX, placeVectorY, length):
         #print("Place")
         self.grid[placeLocationX][placeLocationY] = 1
 
         #if length is not 0, recur to place the next space
         #add the placeVector to the placeLocation to get the next placeLocation
         if(length != 0):
-            self.placeBattleShip(placeLocationX + placeVectorX, placeLocationY + placeVectorY, placeVectorX, placeVectorY, length-1)
+            self.placePyShip(placeLocationX + placeVectorX, placeLocationY + placeVectorY, placeVectorX, placeVectorY, length-1)
 
-    #Check grid for a hit, if hit, return 1, if miss, return 0
+    #remove a try, Check grid for a hit, if hit, return 1, if miss, return 0
     def fire(self, fireX, fireY):
+        self.tires -= 1
+
         if self.grid[fireX][fireY] == 1:
-            self.hit()
-            return 1
+            self.hit(fireX,fireY)
+            
         else:
             self.miss()
-            return 0
+
+        self.checkSunk()
+        self.checkLost()
 
     #what to do if hit
-    def hit(self):
+    def hit(self,hitX,hitY):
         self.numHits += 1
         #print(self.numHits)
+        self.grid[hitX][hitY] = 0
         print('hit')
-        self.checkSunk()
 
     #what to do on a miss
     def miss(self):
@@ -87,18 +91,15 @@ class Battleship():
         if self.numHits == self.shipSize:
             self.sunk()
 
+    #check if game is lost
+    def checkSunk(self):
+        if self.tries == 0:
+            self.lose()
+
     #what to do if sunk
     def sunk(self):
-        self.isSunk = True
-        print('You sunk my Battleship!')
+        print('You sunk my PyShip!')
 
-testBattleship = Battleship(5,4)
-testBattleship.fire(2,2)
-testBattleship.fire(2,3)
-testBattleship.fire(2,4)
-testBattleship.fire(2,1)
-
-testBattleship.fire(1,2)
-testBattleship.fire(2,2)
-testBattleship.fire(3,2)
-testBattleship.fire(4,2)
+    #what to do if lose
+    def lose(self):
+        print ('You lost, sorry')
