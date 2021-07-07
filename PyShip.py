@@ -92,11 +92,10 @@ class PyShip():
         self.numHits += 1
         #print(self.numHits)
         self.grid[hitX][hitY] = 0
-        print('hit')
 
     #what to do on a miss
     def miss(self):
-        print('miss')
+        return
 
     #check if sunk
     def checkSunk(self):
@@ -114,8 +113,8 @@ class PyShip():
 
     #what to do if sunk
     def sunk(self):
-        print('You sunk my PyShip!')
+        return
 
     #what to do if lose
     def lose(self):
-        print ('You lost, sorry')
+        return
