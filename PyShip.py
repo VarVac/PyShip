@@ -33,7 +33,7 @@ class PyShip():
         #print(self.grid)    
         
     #generates a place vector
-    #generate 4 possible vectors (1,0), (0,1), (-1,0), (0,-1)
+    #generate 4 possible vectors (1,0), (0,1)
     def createPlaceVector(self, placeCase):
         #+x
         if placeCase == 0:
@@ -42,7 +42,7 @@ class PyShip():
         elif placeCase == 1:
             return (0,1)
 
-    #generates the placeLocation, must consider the placeCase ((1,0), (0,1), (-1,0), or (0,-1)) and size to avoid invalid configurations
+    #generates the placeLocation, must consider the placeCase ((1,0), (0,1)) and size to avoid invalid configurations
     def createPlaceLocation(self, placeCase, gridSize, shipSize):
         #+x: x must be between 0 to gridSize - shipSize (inclusive)
         if placeCase == 0:
@@ -62,18 +62,30 @@ class PyShip():
         if(length != 0):
             self.placePyShip(placeLocationX + placeVectorX, placeLocationY + placeVectorY, placeVectorX, placeVectorY, length-1)
 
-    #remove a try, Check grid for a hit, if hit, return 1, if miss, return 0
+    #remove a try, Check grid for a hit, return the status of the hit and the game state
     def fire(self, fireX, fireY):
         self.tires -= 1
 
+        #Check hit or miss
         if self.grid[fireX][fireY] == 1:
             self.hit(fireX,fireY)
+            isHit = 'HIT'
             
         else:
             self.miss()
+            isHit = 'MISS'
 
-        self.checkSunk()
-        self.checkLost()
+        #Check game state
+        if self.checkSunk() == True:
+            gameState = 'WIN'
+
+        elif self.checkLost() == True:
+            gameState = 'LOSE'
+        
+        else:
+            gameState = 'CONT'
+        
+        return (isHit, gameState)
 
     #what to do if hit
     def hit(self,hitX,hitY):
@@ -90,11 +102,15 @@ class PyShip():
     def checkSunk(self):
         if self.numHits == self.shipSize:
             self.sunk()
+            return True
+        return False
 
     #check if game is lost
-    def checkSunk(self):
+    def checkLost(self):
         if self.tries == 0:
             self.lose()
+            return True
+        return False
 
     #what to do if sunk
     def sunk(self):
